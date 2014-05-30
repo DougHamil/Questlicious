@@ -1,0 +1,16 @@
+[
+{
+  "modid": "questlicious",
+  "name": "Questlicious",
+  "description": "Questlicious extenions for LOTR mod.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authors": ["DougHamil"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
