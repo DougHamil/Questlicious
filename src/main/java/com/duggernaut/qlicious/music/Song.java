@@ -36,7 +36,8 @@ public class Song implements MetaEventListener {
 	private final int id;
 	private Sequence sequence;
 	private Sequencer sequencer;
-	private String filename;
+	private SongSpells songSpell;
+	private int songSpellId;
 	private long tickPosition;
 	private Map<Integer, Integer> entityToTrackIndex = Maps.newHashMap();
 	private Map<Integer, Integer> entityToInstrument = Maps.newHashMap();
@@ -47,17 +48,18 @@ public class Song implements MetaEventListener {
 	private List<IndexedTrack> orderedTracks;
 	private boolean isServerSide;
 
-	public Song(String name, Sequence sequence) {
-		this(songGUID++, name, sequence, 0, true);
+	public Song(int songSpellId, Sequence sequence) {
+		this(songGUID++, songSpellId, sequence, 0, true);
 	}
 
-	public Song(int id, String name, Sequence sequence, long tickPosition, boolean isServerSide) 
+	public Song(int id, int songSpellId, Sequence sequence, long tickPosition, boolean isServerSide) 
 	{
 		this.id = id;
 		this.sequence = sequence;
-		this.filename = name;
+		this.songSpellId = songSpellId;
 		this.tickPosition = tickPosition;
 		this.isServerSide = isServerSide;
+		this.songSpell = SongSpells.fromId(this.songSpellId);
 		Track[] tracks = this.sequence.getTracks();
 		this.orderedTracks = Lists.newArrayList();
 		Set<Integer> claimedChannels = Sets.newHashSet();
@@ -322,13 +324,18 @@ public class Song implements MetaEventListener {
 		}// consume
 	}
 
+	public String getSongSpellName()
+	{
+		return this.songSpell.getName();
+	}
+	
 	public boolean isEmpty()
 	{
 		return this.entityToTrackIndex.isEmpty();
 	}
 	
-	public String getFileName() {
-		return this.filename;
+	public int getSongSpellId() {
+		return this.songSpellId;
 	}
 
 	public int getId() {

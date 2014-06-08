@@ -1,37 +1,97 @@
 package com.duggernaut.qlicious.music;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import java.util.Random;
 
 import net.minecraft.entity.player.EntityPlayer;
 
-import com.google.common.collect.ImmutableMap;
-
-public class SongSpells
+public enum SongSpells
 {
-	private static final String SPELL_PACKAGE = "com.duggernaut.qlicious.music.spell";
+	CROP_GROWTH(1, "Grow Crops", "Lessons.mid", "CropGrowthSongSpell");
 	
-	// Mapping of midi file names to the SongSpell class that should be instantiated
-	private static final ImmutableMap<String, String> FILENAME_TO_SPELL_CLASS = ImmutableMap.<String, String>builder()
-			.put("Lessons.mid", "CropGrowthSongSpell")
-			.build(); 
+	private static final String SPELL_PACKAGE = "com.duggernaut.qlicious.music.spell";
 
+	private final String name;
+	private final String midiFilename;
+	private final String className;
+	private final int id;
+	
+	private SongSpells(int id, String name, String midi, String clazz)
+	{
+		this.id = id;
+		this.name = name;
+		this.midiFilename = midi;
+		this.className = clazz;
+	}
+	
+	public int getId()
+	{
+		return this.id;
+	}
+	
+	public String getName()
+	{
+		return this.name;
+	}
+	
+	public String getMidiFilename()
+	{
+		return this.midiFilename;
+	}
+	
+	public String getClassName()
+	{
+		return this.className;
+	}
+	
+	public static SongSpells fromId(int id)
+	{
+		for(SongSpells s : SongSpells.values())
+		{
+			if(s.getId() == id)
+				return s;
+		}
+		return null;
+	}
+	
+	public static SongSpells getSongSpellByMidiFilename(String filename)
+	{
+		for(SongSpells s : SongSpells.values())
+		{
+			if(s.getMidiFilename().equals(filename))
+				return s;
+		}
+		
+		return null;
+	}
+	
+	
+	public static SongSpells getRandomSongSpell()
+	{
+		return SongSpells.values()[(new Random()).nextInt(SongSpells.values().length)];
+	}
+	
 	public static SongSpell instantiateForSong(Song song, EntityPlayer clientPlayer)
 	{
-		String spellClassName = FILENAME_TO_SPELL_CLASS.get(song.getFileName());
-		if(spellClassName != null)
+		SongSpells spellIdentifier = SongSpells.fromId(song.getSongSpellId());
+		
+		if(spellIdentifier != null)
 		{
-			spellClassName = spellClassName + (clientPlayer != null ? "Client" : "Server");
-			
-			try {
-				Class spellSongClass = Class.forName(SPELL_PACKAGE + "." + spellClassName);
-				Constructor spellConstructor = spellSongClass.getConstructor(Song.class, EntityPlayer.class);
-				return (SongSpell)spellConstructor.newInstance(song, clientPlayer);
-			} catch (Exception e) {
-				e.printStackTrace();
+			String spellClassName = spellIdentifier.getClassName();
+			if(spellClassName != null)
+			{
+				spellClassName = spellClassName + (clientPlayer != null ? "Client" : "Server");
+				
+				try {
+					Class spellSongClass = Class.forName(SPELL_PACKAGE + "." + spellClassName);
+					Constructor spellConstructor = spellSongClass.getConstructor(Song.class, EntityPlayer.class);
+					return (SongSpell)spellConstructor.newInstance(song, clientPlayer);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				
+				return null;
 			}
-			
-			return null;
 		}
 		
 		return null;

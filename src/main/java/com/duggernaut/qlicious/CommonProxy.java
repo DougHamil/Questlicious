@@ -9,6 +9,7 @@ import com.duggernaut.qlicious.music.ServerMusicEventHandler;
 import com.duggernaut.qlicious.music.Song;
 import com.duggernaut.qlicious.music.SongSpell;
 import com.duggernaut.qlicious.music.SongSpells;
+import com.duggernaut.qlicious.music.instruments.Instrument;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.IGuiHandler;
@@ -16,6 +17,9 @@ import cpw.mods.fml.common.network.IGuiHandler;
 public class CommonProxy implements IGuiHandler
 {
 	public static int SCHEMATIC_GUI_ID = 20;
+	public static int SELECT_SONG_SPELL_GUI_ID = 21;
+	
+	public static Instrument activeInstrument;
 	public static SchematicContainerTileEntity schematicContainer;
 	public static int dimension;
 	

@@ -47,16 +47,18 @@ public class SongSystem
 	// Server - Initialize a new random song
 	public Song initializeRandomSong()
 	{
-		String songName = MIDIBank.instance.getRandomSongName();
-		Song newSong = new Song(songName, MIDIBank.instance.getSequenceForSong(songName));
+		SongSpells songSpell = SongSpells.getRandomSongSpell();
+		Song newSong = new Song(songSpell.getId(), MIDIBank.instance.getSequenceForSong(songSpell.getMidiFilename()));
 		this.initializeSong(newSong);
 		return newSong;
 	}
 	
 	// Server - Initialize a new song with the midi file provided
-	public Song initializeNewSong(String midiFileName)
+	public Song initializeNewSong(int songSpellId)
 	{
-		Song newSong = new Song(midiFileName, MIDIBank.instance.getSequenceForSong(midiFileName));
+		SongSpells spell = SongSpells.fromId(songSpellId);
+		Logger.log("Initializing song for spell: "+songSpellId);
+		Song newSong = new Song(spell.getId(), MIDIBank.instance.getSequenceForSong(spell.getMidiFilename()));
 		this.initializeSong(newSong);
 		return newSong;
 	}
@@ -64,7 +66,7 @@ public class SongSystem
 	// Server - tell clients about the new song
 	private void initializeSong(Song song)
 	{
-		Logger.log("Server initialized song: "+song.getFileName());
+		Logger.log("Server initialized song: "+song.getSongSpellName());
 		this.songsById.put(song.getId(), song);
 		SongSpell spell = QliciousMod.proxy.createSongSpell(song);
 		if(spell != null)
@@ -74,7 +76,7 @@ public class SongSystem
 		}
 		else
 		{
-			Logger.log("Server - could not create spell for song "+song.getFileName());
+			Logger.log("Server - could not create spell for song "+song.getSongSpellName());
 		}
 		AbstractPacket packet = new RegisterSongPacket(song, false);
 		QliciousMod.packetPipeline.sendToAll(packet);
@@ -83,7 +85,7 @@ public class SongSystem
 	// Client - register a new song to the mapping
 	public void registerSong(Song song)
 	{
-		Logger.log("Client registered song: "+song.getFileName());
+		Logger.log("Client registered song: "+song.getSongSpellName());
 		this.songsById.put(song.getId(),  song);
 		SongSpell spell = QliciousMod.proxy.createSongSpell(song);
 		if(spell != null)

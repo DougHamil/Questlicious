@@ -7,6 +7,7 @@ import net.minecraft.entity.player.EntityPlayer;
 
 import com.duggernaut.qlicious.music.MIDIBank;
 import com.duggernaut.qlicious.music.Song;
+import com.duggernaut.qlicious.music.SongSpells;
 import com.duggernaut.qlicious.music.SongSystem;
 import com.duggernaut.qlicious.net.AbstractPacket;
 
@@ -15,7 +16,7 @@ import cpw.mods.fml.common.network.ByteBufUtils;
 public class RegisterSongPacket extends AbstractPacket
 {
 	private int songId;
-	private String songFilename;
+	private int songSpellId;
 	private boolean isUnregister;
 	private long tickPosition;
 
@@ -23,7 +24,7 @@ public class RegisterSongPacket extends AbstractPacket
 	public RegisterSongPacket(Song song, boolean isUnregister)
 	{
 		this.songId = song.getId();
-		this.songFilename = song.getFileName();
+		this.songSpellId = song.getSongSpellId();
 		this.isUnregister = isUnregister;
 		this.tickPosition = song.getTickPosition();
 	}
@@ -31,7 +32,7 @@ public class RegisterSongPacket extends AbstractPacket
 	@Override
 	public void encodeInto(ChannelHandlerContext ctx, ByteBuf buffer) {
 		buffer.writeInt(songId);
-		ByteBufUtils.writeUTF8String(buffer,  songFilename);
+		buffer.writeInt(songSpellId);
 		buffer.writeBoolean(this.isUnregister);
 		buffer.writeLong(this.tickPosition);
 	}
@@ -39,7 +40,7 @@ public class RegisterSongPacket extends AbstractPacket
 	@Override
 	public void decodeInto(ChannelHandlerContext ctx, ByteBuf buffer) {
 		songId = buffer.readInt();
-		songFilename = ByteBufUtils.readUTF8String(buffer);
+		songSpellId = buffer.readInt();
 		isUnregister = buffer.readBoolean();
 		tickPosition = buffer.readLong();
 	}
@@ -53,7 +54,8 @@ public class RegisterSongPacket extends AbstractPacket
 		}
 		else
 		{
-			Song song = new Song(this.songId, this.songFilename, MIDIBank.instance.getSequenceForSong(this.songFilename), this.tickPosition, false);
+			SongSpells spell = SongSpells.fromId(this.songSpellId);
+			Song song = new Song(this.songId, spell.getId(), MIDIBank.instance.getSequenceForSong(spell.getMidiFilename()), this.tickPosition, false);
 			SongSystem.client.registerSong(song);
 		}
 	}

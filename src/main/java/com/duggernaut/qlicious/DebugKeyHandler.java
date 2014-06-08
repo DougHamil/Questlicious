@@ -8,11 +8,11 @@ import net.minecraft.entity.player.EntityPlayer;
 
 import org.lwjgl.input.Keyboard;
 
-import com.duggernaut.qlicious.music.net.PlayInstrumentPacket;
+import com.duggernaut.qlicious.music.SongSpells;
+import com.duggernaut.qlicious.music.net.CastSongSpellPacket;
 import com.duggernaut.qlicious.net.AbstractPacket;
 
 import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.InputEvent.KeyInputEvent;
 
@@ -55,7 +55,7 @@ public class DebugKeyHandler
 				if(entity != null)
 				{
 					Logger.log(String.format("Entity %s is now playing a song!", entity.toString()));
-					AbstractPacket packet = new PlayInstrumentPacket(entity.getEntityId(), 0, 0, 1, PlayInstrumentPacket.PLAY_COMMAND);
+					AbstractPacket packet = new CastSongSpellPacket(entity.getEntityId(), 1, SongSpells.CROP_GROWTH.getId());
 					QliciousMod.packetPipeline.sendToServer(packet);
 				}
 			}

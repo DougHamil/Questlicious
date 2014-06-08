@@ -22,11 +22,10 @@ import com.duggernaut.qlicious.music.instruments.Fiddle;
 import com.duggernaut.qlicious.music.instruments.Flute;
 import com.duggernaut.qlicious.music.instruments.Kalimba;
 import com.duggernaut.qlicious.music.instruments.Ocarina;
+import com.duggernaut.qlicious.music.net.CastSongSpellPacket;
 import com.duggernaut.qlicious.music.net.PlayInstrumentPacket;
 import com.duggernaut.qlicious.music.net.RegisterSongPacket;
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
@@ -85,6 +84,7 @@ public class MusicSystem
 		
 		QliciousMod.packetPipeline.registerPacket(PlayInstrumentPacket.class);
 		QliciousMod.packetPipeline.registerPacket(RegisterSongPacket.class);
+		QliciousMod.packetPipeline.registerPacket(CastSongSpellPacket.class);
 	}
 	
 	public void purge()
@@ -137,7 +137,7 @@ public class MusicSystem
 		this.activeSong = song;
 		if(this.activeSong != null)
 			this.activeSong.play();
-		Logger.log(String.format("Set %s as the active song", this.activeSong == null ? "NULL" : this.activeSong.getFileName()));
+		Logger.log(String.format("Set %s as the active song", this.activeSong == null ? "NULL" : this.activeSong.getSongSpellName()));
 	}
 	
 	public Song getSongForEntity(Entity entity)
@@ -155,7 +155,7 @@ public class MusicSystem
 	// Server/Client - set mapping for entity to song and instrument
 	public void setEntitySong(Entity entity, Song song)
 	{
-		Logger.log(String.format("Setting entity %d as playing song %s", entity.getEntityId(), song.getFileName()));
+		Logger.log(String.format("Setting entity %d as playing song %s", entity.getEntityId(), song.getSongSpellName()));
 		this.songs.put(song, entity);
 	}
 	

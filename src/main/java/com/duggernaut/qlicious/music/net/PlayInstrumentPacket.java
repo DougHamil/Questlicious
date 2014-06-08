@@ -98,9 +98,7 @@ public class PlayInstrumentPacket extends AbstractPacket
 		if(this.command == PLAY_COMMAND)
 		{
 			Song song = MusicSystem.server.findNearbySong(entity);
-			if(song == null)
-				song = SongSystem.server.initializeRandomSong();
-			
+		
 			// Add the player to the song
 			if(song.addEntity(entity,  instrumentId))
 			{

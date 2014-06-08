@@ -4,11 +4,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
 
 import com.duggernaut.qlicious.editor.SchematicContainerGUI;
 import com.duggernaut.qlicious.music.ClientMusicEventHandler;
 import com.duggernaut.qlicious.music.Song;
+import com.duggernaut.qlicious.music.SongSelectGUI;
 import com.duggernaut.qlicious.music.SongSpell;
 import com.duggernaut.qlicious.music.SongSpells;
 
@@ -55,6 +55,8 @@ public class ClientProxy extends CommonProxy
 		
 		if(ID == SCHEMATIC_GUI_ID)
 			return new SchematicContainerGUI();
+		else if(ID == SELECT_SONG_SPELL_GUI_ID)
+			return new SongSelectGUI();
 		// TODO Auto-generated method stub
 		return null;
 	}
